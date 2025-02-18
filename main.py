@@ -30,15 +30,28 @@ class Example(QMainWindow):
             print(e)
 
     def keyPressEvent(self, event):
-        cur = self.zoom.value()
-        if event.key() == Qt.Key.Key_PageUp:
-            print(1)
-            self.zoom.setValue(cur + 1)
+        try:
+            cur = self.zoom.value()
+            latitude = str(self.latitude.text()).strip()
+            longitude = str(self.longitude.text()).strip()
+            if event.key() == Qt.Key.Key_PageUp:
+                self.zoom.setValue(cur + 1)
+            elif event.key() == Qt.Key.Key_PageDown:
+                print(1)
+                self.zoom.setValue(cur - 1)
+            if event.key() == Qt.Key.Key_W:
+                latitude = float(latitude) + 0.0005
+            elif event.key() == Qt.Key.Key_S:
+                latitude = float(latitude) - 0.0005
+            elif event.key() == Qt.Key.Key_D:
+                longitude = float(longitude) + 0.0005
+            elif event.key() == Qt.Key.Key_A:
+                longitude = float(longitude) - 0.0005
+            self.latitude.setText(str(latitude))
+            self.longitude.setText(str(longitude))
             self.show_map()
-        elif event.key() == Qt.Key.Key_PageDown:
-            print(2)
-            self.zoom.setValue(cur - 1)
-            self.show_map()
+        except Exception as e:
+            print(e)
 
 
 if __name__ == '__main__':
