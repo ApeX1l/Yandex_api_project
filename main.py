@@ -1,6 +1,7 @@
 import sys
 
 from PyQt6 import uic
+from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton
 from draw_map import draw_map
@@ -27,6 +28,17 @@ class Example(QMainWindow):
             self.map.setPixmap(paing)
         except Exception as e:
             print(e)
+
+    def keyPressEvent(self, event):
+        cur = self.zoom.value()
+        if event.key() == Qt.Key.Key_PageUp:
+            print(1)
+            self.zoom.setValue(cur + 1)
+            self.show_map()
+        elif event.key() == Qt.Key.Key_PageDown:
+            print(2)
+            self.zoom.setValue(cur - 1)
+            self.show_map()
 
 
 if __name__ == '__main__':
