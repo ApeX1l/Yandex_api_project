@@ -3,7 +3,7 @@ from io import BytesIO
 from PyQt6.QtGui import QPixmap
 
 
-def draw_map(address_ll, delta, org_point=None):
+def draw_map(address_ll, delta, theme, org_point=None):
     apikey = "604d9abb-48ac-4c58-9c7f-c0dca0c09445"
     # print(address_ll)
     # print(delta)
@@ -11,6 +11,7 @@ def draw_map(address_ll, delta, org_point=None):
         # позиционируем карту центром на наш исходный адрес
         "ll": address_ll,
         'z': delta,
+        'theme': theme,
         "apikey": apikey,
         # добавим точку, чтобы указать найденную аптеку
         # "pt": "{0},pm2dgl".format(org_point)

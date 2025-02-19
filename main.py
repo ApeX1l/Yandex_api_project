@@ -3,7 +3,7 @@ import sys
 from PyQt6 import uic
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
-from PyQt6.QtWidgets import QApplication, QLabel, QMainWindow, QPushButton
+from PyQt6.QtWidgets import QApplication, QMainWindow
 from draw_map import draw_map
 
 
@@ -16,18 +16,24 @@ class Example(QMainWindow):
         uic.loadUi('design.ui', self)
         self.show_button.clicked.connect(self.show_map)
         self.zoom.setRange(0, 21)
+        self.theme = 'light'
+        self.theme_button.clicked.connect(self.change_theme)
 
     def show_map(self):
         try:
             latitude = str(self.latitude.text()).strip()
             longitude = str(self.longitude.text()).strip()
             zoom = self.zoom.value()
-            im = draw_map(f'{longitude},{latitude}', zoom)
+            im = draw_map(f'{longitude},{latitude}', zoom, self.theme)
             paing = QPixmap()
             paing.loadFromData(im)
             self.map.setPixmap(paing)
         except Exception as e:
             print(e)
+
+    def change_theme(self):
+        self.theme = 'dark' if self.theme == 'light' else 'light'
+        self.show_map()
 
     def keyPressEvent(self, event):
         try:
