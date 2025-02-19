@@ -70,11 +70,9 @@ class Example(QMainWindow):
                 self.zoom.setValue(cur - 1)
                 fl = True
             if event.key() == Qt.Key.Key_W:
-                print(1)
                 latitude = float(latitude) + 0.001
                 fl = True
             if event.key() == Qt.Key.Key_S:
-                print(1)
                 latitude = float(latitude) - 0.001
                 fl = True
             if event.key() == Qt.Key.Key_D:
