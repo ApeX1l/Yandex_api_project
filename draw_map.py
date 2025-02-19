@@ -14,7 +14,7 @@ def draw_map(address_ll, delta, theme, org_point=None):
         'theme': theme,
         "apikey": apikey,
         # добавим точку, чтобы указать найденную аптеку
-        # "pt": "{0},pm2dgl".format(org_point)
+        "pt": f"{org_point},pm2dgl" if org_point else None
     }
     map_api_server = "https://static-maps.yandex.ru/v1"
     response = requests.get(map_api_server, params=map_params)

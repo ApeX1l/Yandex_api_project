@@ -5,6 +5,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from draw_map import draw_map
+from search_org import search_org
 
 
 class Example(QMainWindow):
@@ -21,10 +22,31 @@ class Example(QMainWindow):
 
     def show_map(self):
         try:
+            zoom = self.zoom.value()
             latitude = str(self.latitude.text()).strip()
             longitude = str(self.longitude.text()).strip()
+            object = str(self.object.text()).strip()
+            if object != '':
+                adress = search_org(object)
+                latitude = str(adress.split(',')[1])
+                longitude = str(adress.split(',')[0])
+                self.latitude.setText(latitude)
+                self.longitude.setText(longitude)
+            im = draw_map(f'{longitude},{latitude}', zoom, self.theme, adress)
+            paing = QPixmap()
+            paing.loadFromData(im)
+            self.map.setPixmap(paing)
+        except Exception as e:
+            print(e)
+
+    def update_map(self):
+        try:
             zoom = self.zoom.value()
-            im = draw_map(f'{longitude},{latitude}', zoom, self.theme)
+            latitude = str(self.latitude.text()).strip()
+            longitude = str(self.longitude.text()).strip()
+            object = str(self.object.text()).strip()
+            adress = search_org(object)
+            im = draw_map(f'{longitude},{latitude}', zoom, self.theme, adress)
             paing = QPixmap()
             paing.loadFromData(im)
             self.map.setPixmap(paing)
@@ -33,29 +55,38 @@ class Example(QMainWindow):
 
     def change_theme(self):
         self.theme = 'dark' if self.theme == 'light' else 'light'
-        self.show_map()
+        return self.update_map()
 
     def keyPressEvent(self, event):
+        fl = False
         try:
             cur = self.zoom.value()
             latitude = str(self.latitude.text()).strip()
             longitude = str(self.longitude.text()).strip()
             if event.key() == Qt.Key.Key_PageUp:
                 self.zoom.setValue(cur + 1)
+                fl = True
             elif event.key() == Qt.Key.Key_PageDown:
-                print(1)
                 self.zoom.setValue(cur - 1)
+                fl = True
             if event.key() == Qt.Key.Key_W:
-                latitude = float(latitude) + 0.0005
-            elif event.key() == Qt.Key.Key_S:
-                latitude = float(latitude) - 0.0005
-            elif event.key() == Qt.Key.Key_D:
-                longitude = float(longitude) + 0.0005
-            elif event.key() == Qt.Key.Key_A:
-                longitude = float(longitude) - 0.0005
+                print(1)
+                latitude = float(latitude) + 0.001
+                fl = True
+            if event.key() == Qt.Key.Key_S:
+                print(1)
+                latitude = float(latitude) - 0.001
+                fl = True
+            if event.key() == Qt.Key.Key_D:
+                longitude = float(longitude) + 0.001
+                fl = True
+            if event.key() == Qt.Key.Key_A:
+                longitude = float(longitude) - 0.001
+                fl = True
             self.latitude.setText(str(latitude))
             self.longitude.setText(str(longitude))
-            self.show_map()
+            if fl:
+                return self.update_map()
         except Exception as e:
             print(e)
 
