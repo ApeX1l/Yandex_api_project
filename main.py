@@ -19,6 +19,8 @@ class Example(QMainWindow):
         self.zoom.setRange(0, 21)
         self.theme = 'light'
         self.theme_button.clicked.connect(self.change_theme)
+        self.reset_button.clicked.connect(self.reset)
+        self.marks = []
 
     def show_map(self):
         try:
@@ -28,11 +30,13 @@ class Example(QMainWindow):
             object = str(self.object.text()).strip()
             if object != '':
                 adress = search_org(object)
+                if adress not in self.marks:
+                    self.marks.append(adress)
                 latitude = str(adress.split(',')[1])
                 longitude = str(adress.split(',')[0])
                 self.latitude.setText(latitude)
                 self.longitude.setText(longitude)
-            im = draw_map(f'{longitude},{latitude}', zoom, self.theme, adress)
+            im = draw_map(f'{longitude},{latitude}', zoom, self.theme, self.marks)
             paing = QPixmap()
             paing.loadFromData(im)
             self.map.setPixmap(paing)
@@ -44,14 +48,16 @@ class Example(QMainWindow):
             zoom = self.zoom.value()
             latitude = str(self.latitude.text()).strip()
             longitude = str(self.longitude.text()).strip()
-            object = str(self.object.text()).strip()
-            adress = search_org(object)
-            im = draw_map(f'{longitude},{latitude}', zoom, self.theme, adress)
+            im = draw_map(f'{longitude},{latitude}', zoom, self.theme, self.marks)
             paing = QPixmap()
             paing.loadFromData(im)
             self.map.setPixmap(paing)
         except Exception as e:
             print(e)
+
+    def reset(self):
+        self.marks.clear()
+        self.update_map()
 
     def change_theme(self):
         self.theme = 'dark' if self.theme == 'light' else 'light'
@@ -81,12 +87,12 @@ class Example(QMainWindow):
             if event.key() == Qt.Key.Key_A:
                 longitude = float(longitude) - 0.001
                 fl = True
-            self.latitude.setText(str(latitude))
-            self.longitude.setText(str(longitude))
+            self.latitude.setText(str(round(float(latitude), 6)))
+            self.longitude.setText(str(round(float(longitude), 6)))
             if fl:
                 return self.update_map()
         except Exception as e:
-            print(e)
+            pass
 
 
 if __name__ == '__main__':

@@ -17,4 +17,5 @@ def search_org(organiz):
     organization = json_response["features"][0]
     point = organization["geometry"]["coordinates"]
     org_point = f"{point[0]},{point[1]}"
-    return org_point
+    marker = 'pm2dgl'
+    return f"{org_point},{marker}"
