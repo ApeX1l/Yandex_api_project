@@ -39,7 +39,7 @@ class Example(QMainWindow):
                 self.latitude.setText(latitude)
                 self.longitude.setText(longitude)
             im = draw_map(f'{longitude},{latitude}', zoom, self.theme, self.marks)
-            address, postal_index = coords(f'{longitude},{latitude}')
+            address, index = coords(f'{longitude},{latitude}')
             self.full_address.setText(address)
             paing = QPixmap()
             paing.loadFromData(im)
