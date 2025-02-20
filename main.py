@@ -22,7 +22,9 @@ class Example(QMainWindow):
         self.theme_button.clicked.connect(self.change_theme)
         self.reset_button.clicked.connect(self.reset)
         self.full_address.setWordWrap(True)
+        self.index_radio.toggled.connect(self.postal_index)
         self.marks = []
+        self.index_bool = False
 
     def show_map(self):
         try:
@@ -39,13 +41,13 @@ class Example(QMainWindow):
                 self.latitude.setText(latitude)
                 self.longitude.setText(longitude)
             im = draw_map(f'{longitude},{latitude}', zoom, self.theme, self.marks)
-            address, index = coords(f'{longitude},{latitude}')
-            self.full_address.setText(address)
+            self.address, self.index = coords(f'{longitude},{latitude}')
+            self.full_address.setText(f'{self.address} {self.index if self.index_bool else ''}')
             paing = QPixmap()
             paing.loadFromData(im)
             self.map.setPixmap(paing)
         except Exception as e:
-            print(e)
+            print(e, 101)
 
     def update_map(self):
         try:
@@ -53,20 +55,32 @@ class Example(QMainWindow):
             latitude = str(self.latitude.text()).strip()
             longitude = str(self.longitude.text()).strip()
             im = draw_map(f'{longitude},{latitude}', zoom, self.theme, self.marks)
+            self.full_address.setText(f'{self.address} {self.index if self.index_bool else ''}')
             paing = QPixmap()
             paing.loadFromData(im)
             self.map.setPixmap(paing)
         except Exception as e:
-            print(e)
+            print(e, 102)
 
     def reset(self):
         self.full_address.clear()
+        self.index_bool = False
+        self.address = ''
+        self.index = ''
+        self.index_radio.setChecked(False)
         self.marks.clear()
+        self.update_map()
+
+    def postal_index(self):
+        if self.index_radio.isChecked():
+            self.index_bool = True
+        else:
+            self.index_bool = False
         self.update_map()
 
     def change_theme(self):
         self.theme = 'dark' if self.theme == 'light' else 'light'
-        return self.update_map()
+        self.update_map()
 
     def keyPressEvent(self, event):
         fl = False
@@ -95,9 +109,9 @@ class Example(QMainWindow):
             self.latitude.setText(str(round(float(latitude), 6)))
             self.longitude.setText(str(round(float(longitude), 6)))
             if fl:
-                return self.update_map()
+                self.update_map()
         except Exception as e:
-            pass
+            print(e, 103)
 
 
 if __name__ == '__main__':

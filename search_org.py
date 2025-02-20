@@ -19,3 +19,6 @@ def search_org(organiz):
     org_point = f"{point[0]},{point[1]}"
     marker = 'pm2dgl'
     return f"{org_point},{marker}"
+
+
+print(search_org('Кремль'))

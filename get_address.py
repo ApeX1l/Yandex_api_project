@@ -16,6 +16,9 @@ def coords(geo):
     json_response = response.json()
     address = json_response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty'][
         'GeocoderMetaData']['Address']['formatted']
-    index = json_response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty'][
-        'GeocoderMetaData']['Address']['postal_code']
+    try:
+        index = json_response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty'][
+            'GeocoderMetaData']['Address']['postal_code']
+    except Exception:
+        return address, 'Почтовый индекс не найден'
     return address, index
