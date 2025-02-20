@@ -6,6 +6,7 @@ from PyQt6.QtGui import QPixmap
 from PyQt6.QtWidgets import QApplication, QMainWindow
 from draw_map import draw_map
 from search_org import search_org
+from get_address import coords
 
 
 class Example(QMainWindow):
@@ -20,6 +21,7 @@ class Example(QMainWindow):
         self.theme = 'light'
         self.theme_button.clicked.connect(self.change_theme)
         self.reset_button.clicked.connect(self.reset)
+        self.full_address.setWordWrap(True)
         self.marks = []
 
     def show_map(self):
@@ -29,14 +31,16 @@ class Example(QMainWindow):
             longitude = str(self.longitude.text()).strip()
             object = str(self.object.text()).strip()
             if object != '':
-                adress = search_org(object)
-                if adress not in self.marks:
-                    self.marks.append(adress)
-                latitude = str(adress.split(',')[1])
-                longitude = str(adress.split(',')[0])
+                coord = search_org(object)
+                if coord not in self.marks:
+                    self.marks.append(coord)
+                latitude = str(coord.split(',')[1])
+                longitude = str(coord.split(',')[0])
                 self.latitude.setText(latitude)
                 self.longitude.setText(longitude)
             im = draw_map(f'{longitude},{latitude}', zoom, self.theme, self.marks)
+            address, postal_index = coords(f'{longitude},{latitude}')
+            self.full_address.setText(address)
             paing = QPixmap()
             paing.loadFromData(im)
             self.map.setPixmap(paing)
@@ -56,6 +60,7 @@ class Example(QMainWindow):
             print(e)
 
     def reset(self):
+        self.full_address.clear()
         self.marks.clear()
         self.update_map()
 
