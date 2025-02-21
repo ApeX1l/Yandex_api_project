@@ -16,8 +16,11 @@ class Example(QMainWindow):
 
     def initUI(self):
         uic.loadUi('design.ui', self)
+        self.map.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.show_button.clicked.connect(self.show_map)
         self.zoom.setRange(0, 21)
+        self.map_width = 411
+        self.map_height = 381
         self.theme = 'light'
         self.theme_button.clicked.connect(self.change_theme)
         self.reset_button.clicked.connect(self.reset)
@@ -111,7 +114,40 @@ class Example(QMainWindow):
             if fl:
                 self.update_map()
         except Exception as e:
-            print(e, 103)
+            # print(e, 103)
+            pass
+
+    def mousePressEvent(self, event):
+        try:
+            label_point = self.map.mapFromParent(event.pos())
+            label_x = label_point.x()
+            label_y = label_point.y()
+            if 0 <= label_x < self.map_width and 0 <= label_y < self.map_height:
+                lat, lon = self.pixel_to_geo(label_x, label_y)
+                self.marks.append(f'{lon},{lat},pm2dgl')
+                address, index = coords(f'{lon},{lat}')
+                self.address = address
+                self.index = index
+            else:
+                print('Клик за пределами карты')
+            self.update_map()
+        except Exception as e:
+            print(e, 104)
+
+    def pixel_to_geo(self, x, y):
+        try:
+            zoom = self.zoom.value()
+            center_lat = float(self.latitude.text().strip())
+            center_lon = float(self.longitude.text().strip())
+            lon_per_pixel = 360 / (2 ** (zoom + 8))
+            lat_per_pixel = 180 / (2 ** (zoom + 8))
+            delta_x = x - self.map_width / 2
+            delta_y = y - self.map_height / 2
+            lon = center_lon + delta_x * lon_per_pixel
+            lat = center_lat - delta_y * lat_per_pixel
+            return lat, lon
+        except Exception as e:
+            print(e, 105)
 
 
 if __name__ == '__main__':
