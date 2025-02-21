@@ -7,6 +7,7 @@ from PyQt6.QtWidgets import QApplication, QMainWindow
 from draw_map import draw_map
 from search_org import search_org
 from get_address import coords
+from load_distance_withoutAPI import lonlat_distance
 
 
 class Example(QMainWindow):
@@ -128,6 +129,13 @@ class Example(QMainWindow):
                 address, index = coords(f'{lon},{lat}')
                 self.address = address
                 self.index = index
+                if event.button() == Qt.MouseButton.RightButton:
+                    point, name = search_org(address, lat, lon)
+                    distance = lonlat_distance((lon, lat), point)
+                    if distance <= 50:
+                        self.object.setText(name)
+                    else:
+                        self.object.setText('Организация не найдена')
             else:
                 print('Клик за пределами карты')
             self.update_map()
