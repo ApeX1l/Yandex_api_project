@@ -137,6 +137,8 @@ class Example(QMainWindow):
                     else:
                         self.object.setText('Организация не найдена')
             else:
+                self.object.clearFocus()
+                super().mousePressEvent(event)
                 print('Клик за пределами карты')
             self.update_map()
         except Exception as e:
